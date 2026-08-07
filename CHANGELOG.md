@@ -27,3 +27,13 @@
   active Claude Code CLI sessions and their cumulative token usage, read
   directly from local session transcripts (`widget/task_tracker.py`) —
   independent of the browser/extension pipeline.
+- Added packaged `.crx` distribution: generated a new signing key (the
+  original was never saved, so its ID was orphaned), rebuilt the extension
+  under the new stable ID `mebojcnaecoalmocdfeoiofjgdflpbhl`, updated the
+  native-messaging allowlist to match, and added `scripts/build-crx.sh` to
+  rebuild `dist/token-meter.crx` after future extension edits. The private
+  key stays local (`keys/`, gitignored) — the `.crx` itself carries no
+  secrets and is safe to distribute.
+- Documented remaining portability gaps (hardcoded native-host path, no
+  cross-platform installer, manual venv/autostart setup, per-machine
+  signing key) as a TODO list for a future public release.

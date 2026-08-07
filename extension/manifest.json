@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Claude Usage Meter",
   "version": "1.0.0",
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApCFOEhzrfwVJ1HyK0GezCOXcb1MdY9VUfQSi5qC2D4aI0/nJSK1TfruMWx4brOTUMrJqrvDUwIIWWUuOKt2jDMDSZ8Qy+0EjxS8LvZ84ncqFsvr4Al+sKlB8ZKvuiIJgGURDDqUI6unpouAOuNxdS+W1XvRVj4AY2Ud61I0BGsw4yE9OCI3NfmAJ/QSdtvGi8/DLekSDeVpnPzH68x8PJxh5nj6kq4cRs+cHfwFxUW+Moe95UEzoWZIfg8HgMHIxn6UqV31i1Ts8xJ0+/urWt7Oq+Nbaccnx6Ff/ffLz1O08co6GEL9UUz2HJRmG8VuggxLEFpMtUISguYQEZ7wJdQIDAQAB",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjm2PWH6M7m80AFT/cVf0iRVewxtadNM/1EEhRLiDNKiYqOXlJUBSbaNqPv9Zx9+1iIIlAV72GJxu+n0qVwr6HpGWHcQ8o1Q8QkouRT85dAOZM9uxbB5SXTToytIfDQ8H7+OoPGZqeIwRJCmb+VO0IfDEdViMMM+1eiMvYnvGndmV/IfAVLMFUTv4Fzn6IUwtuhGZ9ZT8+RJgfjQpBf1i9NoCzghSdtt+fnCeIU5xsiljmKNJ6VINv1jShglOr5/wAI/Q+ayg4iydDHBLuY2VYXoXiCdiRcW+h0ipX+lK/3qlGYii6DlW9Yd0Z1z8DFEyzh0rUVer/VhzdwQ3TQNUAQIDAQAB",
   "description": "Shows your remaining Claude subscription usage (5-hour session, weekly, routines, extra usage) in the toolbar.",
   "author": "Nachtalb",
   "homepage_url": "https://github.com/Nachtalb/claude-usage-meter",
