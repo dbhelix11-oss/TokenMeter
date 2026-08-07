@@ -1,0 +1,9 @@
+{
+  "name": "com.tokenmeter.claude_usage",
+  "description": "Token Meter native messaging host - relays Claude usage data to a local status file",
+  "path": "/home/stoic/Documents/ClaudeProject/TokenMeter/native_host/host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://emfjjnlajednlkhbbgpgpkjfkdbangcn/"
+  ]
+}

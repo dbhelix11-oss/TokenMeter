@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Claude Usage</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <h1 class="serif-title">Claude usage</h1>
+      <button id="refreshBtn" class="icon-btn" aria-label="Refresh usage" title="Refresh">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M10.386 2.51A7.5 7.5 0 1 1 5.499 4H3a.5.5 0 0 1 0-1h3.5a.5.5 0 0 1 .49.402L7 3.5V7a.5.5 0 0 1-1 0V4.879a6.5 6.5 0 1 0 4.335-1.37L10 3.5l-.1-.01a.5.5 0 0 1 .1-.99z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <main id="content">
+      <!-- Signed-out state -->
+      <section class="card signin-card" id="signinCard" hidden>
+        <h2 class="section-title">Sign in to Claude</h2>
+        <p class="muted">
+          You're not signed in to claude.ai, so your usage can't be loaded.
+          Sign in and this popup will update automatically.
+        </p>
+        <button class="btn-primary" id="signinBtn">Sign in to Claude</button>
+      </section>
+
+      <!-- Plan usage limits -->
+      <section class="card" id="planSection">
+        <div class="row-between">
+          <h2 class="section-title">Plan usage limits</h2>
+          <span class="plan-tag" id="planTag">Pro</span>
+        </div>
+
+        <div class="meter-row">
+          <div class="meter-label">
+            <p class="label-primary">Current session</p>
+            <p class="label-secondary" id="fiveHourReset">—</p>
+          </div>
+          <div class="meter-track">
+            <div class="bar"><div class="bar-fill" id="fiveHourFill" style="width:0%"></div></div>
+            <p class="pct" id="fiveHourPct">—</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Weekly limits -->
+      <section class="card" id="weeklySection">
+        <h2 class="section-title">Weekly limits</h2>
+        <p class="muted small">
+          <a href="https://support.claude.com/en/articles/11647753-understanding-usage-and-length-limits" target="_blank" rel="noopener noreferrer">Learn more about usage limits</a>
+        </p>
+
+        <div class="meter-row">
+          <div class="meter-label">
+            <p class="label-primary">All models</p>
+            <p class="label-secondary" id="weeklyReset">—</p>
+          </div>
+          <div class="meter-track">
+            <div class="bar"><div class="bar-fill" id="weeklyFill" style="width:0%"></div></div>
+            <p class="pct" id="weeklyPct">—</p>
+          </div>
+        </div>
+
+        <div id="weeklyExtra"></div>
+
+        <p class="muted small last-updated" id="lastUpdated">Last updated: —</p>
+      </section>
+
+      <!-- Additional features -->
+      <section class="card" id="routinesSection" hidden>
+        <h2 class="section-title">Additional features</h2>
+        <div class="meter-row">
+          <div class="meter-label">
+            <p class="label-primary">Daily included routine runs</p>
+            <p class="label-secondary" id="routinesSub">—</p>
+          </div>
+          <div class="meter-track">
+            <div class="bar"><div class="bar-fill" id="routinesFill" style="width:0%"></div></div>
+            <p class="pct"><span class="tabular" id="routinesPct">—</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Extra usage -->
+      <section class="card" id="extraSection" hidden>
+        <h2 class="section-title">Extra usage</h2>
+        <p class="muted">
+          <span id="extraEnabledLabel">Extra usage enabled.</span>
+          <a href="https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans" target="_blank" rel="noopener noreferrer">Learn more</a>
+        </p>
+
+        <div class="meter-row" id="extraMeterRow">
+          <div class="meter-label">
+            <p class="label-primary" id="extraSpent">—</p>
+            <p class="label-secondary" id="extraReset">Resets monthly</p>
+          </div>
+          <div class="meter-track" id="extraMeterTrack">
+            <div class="bar"><div class="bar-fill" id="extraFill" style="width:0%"></div></div>
+            <p class="pct" id="extraPct">—</p>
+          </div>
+        </div>
+
+        <div class="row-between extra-row">
+          <div>
+            <p class="label-primary" id="extraLimit">—</p>
+            <p class="label-secondary">Monthly spend limit</p>
+          </div>
+          <button class="btn-secondary" data-open="usage">Adjust limit</button>
+        </div>
+
+        <div class="row-between extra-row">
+          <div>
+            <p class="label-primary" id="extraBalance">—</p>
+            <p class="label-secondary">Current balance</p>
+          </div>
+          <button class="btn-secondary" data-open="usage">Buy extra usage</button>
+        </div>
+      </section>
+
+      <div id="errorBanner" class="error-banner" hidden></div>
+    </main>
+
+    <footer class="footer">
+      <a href="https://claude.ai/settings/usage/" target="_blank" rel="noopener noreferrer">Open Claude settings →</a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

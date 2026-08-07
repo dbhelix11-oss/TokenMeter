@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Claude Usage Meter",
+  "version": "1.0.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApCFOEhzrfwVJ1HyK0GezCOXcb1MdY9VUfQSi5qC2D4aI0/nJSK1TfruMWx4brOTUMrJqrvDUwIIWWUuOKt2jDMDSZ8Qy+0EjxS8LvZ84ncqFsvr4Al+sKlB8ZKvuiIJgGURDDqUI6unpouAOuNxdS+W1XvRVj4AY2Ud61I0BGsw4yE9OCI3NfmAJ/QSdtvGi8/DLekSDeVpnPzH68x8PJxh5nj6kq4cRs+cHfwFxUW+Moe95UEzoWZIfg8HgMHIxn6UqV31i1Ts8xJ0+/urWt7Oq+Nbaccnx6Ff/ffLz1O08co6GEL9UUz2HJRmG8VuggxLEFpMtUISguYQEZ7wJdQIDAQAB",
+  "description": "Shows your remaining Claude subscription usage (5-hour session, weekly, routines, extra usage) in the toolbar.",
+  "author": "Nachtalb",
+  "homepage_url": "https://github.com/Nachtalb/claude-usage-meter",
+  "permissions": [
+    "storage",
+    "alarms",
+    "nativeMessaging"
+  ],
+  "host_permissions": [
+    "https://claude.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Claude Usage",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
