@@ -15,7 +15,7 @@
 
 const NATIVE_HOST_NAME = 'com.tokenmeter.claude_usage';
 const ALARM_NAME = 'claude-usage-refresh';
-const REFRESH_MINUTES = 10;                   // how often the alarm fires
+const REFRESH_MINUTES = 1;                    // how often the alarm fires
 const MIN_FETCH_INTERVAL_MS = 30 * 1000;      // hard throttle across ALL refresh paths
 const STORAGE_KEY = 'claudeUsageData';
 const ORG_STORAGE_KEY = 'claudeUsageOrgId';
@@ -206,23 +206,25 @@ async function refreshAndUpdateBadge({ force = false } = {}) {
 }
 
 function ensureAlarm() {
-  chrome.alarms.get(ALARM_NAME, (existing) => {
-    if (!existing) {
-      chrome.alarms.create(ALARM_NAME, {
-        periodInMinutes: REFRESH_MINUTES,
-        delayInMinutes: 0
-      });
-    }
+  // chrome.alarms.create replaces any existing alarm of the same name, so
+  // this always reflects the current REFRESH_MINUTES even after a reload
+  // that changed it (an old alarm would otherwise persist unchanged).
+  chrome.alarms.create(ALARM_NAME, {
+    periodInMinutes: REFRESH_MINUTES,
+    delayInMinutes: 0
   });
 }
 
+// Run unconditionally at script load, not just inside onInstalled/onStartup —
+// a manual "Reload" in chrome://extensions doesn't reliably fire either of
+// those, which left a stale alarm period in place after edits here.
+ensureAlarm();
+
 chrome.runtime.onInstalled.addListener(() => {
-  ensureAlarm();
   refreshAndUpdateBadge();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  ensureAlarm();
   refreshAndUpdateBadge();
 });
 

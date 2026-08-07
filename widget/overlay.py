@@ -15,8 +15,10 @@ from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QFont
 from PySide6.QtWidgets import QApplication, QWidget, QMenu
 
-STATUS_FILE = Path.home() / ".local" / "share" / "token-meter" / "status.json"
-POSITION_FILE = Path.home() / ".local" / "share" / "token-meter" / "widget_position.json"
+from task_tracker import TaskTracker, fmt_tokens
+
+STATUS_FILE = Path.home() / "token-meter" / "status.json"
+POSITION_FILE = Path.home() / "token-meter" / "widget_position.json"
 STALE_AFTER_MS = 20 * 60 * 1000  # extension refreshes every 10 min; flag one missed cycle
 
 BG_COLOR = QColor(28, 26, 24, 235)
@@ -107,6 +109,61 @@ class MeterRow(QWidget):
         p.end()
 
 
+class TaskList(QWidget):
+    ROW_H = 18
+    HEADER_H = 16
+    MAX_ROWS = 5
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.tasks = []
+        self.setFixedHeight(self.HEADER_H + self.ROW_H * self.MAX_ROWS)
+
+    def set_tasks(self, tasks):
+        self.tasks = tasks
+        self.update()
+
+    def paintEvent(self, event):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+
+        p.setFont(QFont("Sans", 7, QFont.Bold))
+        p.setPen(DIM_COLOR)
+        p.drawText(0, 10, "RECENT TASKS")
+
+        if not self.tasks:
+            p.setFont(QFont("Sans", 8))
+            p.setPen(DIM_COLOR)
+            p.drawText(0, self.HEADER_H + 12, "no sessions yet")
+            p.end()
+            return
+
+        label_font = QFont("Sans", 9)
+        tok_font = QFont("Sans", 9, QFont.Bold)
+        y = self.HEADER_H + 12
+
+        for task in self.tasks[: self.MAX_ROWS]:
+            p.setPen(Qt.NoPen)
+            p.setBrush(BLUE if task["active"] else GRAY)
+            p.drawEllipse(1, y - 8, 6, 6)
+
+            p.setFont(label_font)
+            p.setPen(FG_COLOR)
+            fm = p.fontMetrics()
+            label = fm.elidedText(task["label"], Qt.ElideRight, self.width() - 90)
+            p.drawText(14, y, label)
+
+            tok_str = fmt_tokens(task["tokens"])
+            p.setFont(tok_font)
+            p.setPen(DIM_COLOR)
+            fm2 = p.fontMetrics()
+            p.drawText(self.width() - fm2.horizontalAdvance(tok_str), y, tok_str)
+
+            y += self.ROW_H
+
+        p.end()
+
+
 class Overlay(QWidget):
     def __init__(self):
         super().__init__()
@@ -114,16 +171,19 @@ class Overlay(QWidget):
             Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.resize(210, 118)
+        self.resize(210, 226)
 
         self.five_hour = MeterRow("5-hour", self)
         self.five_hour.setGeometry(14, 12, 182, 34)
         self.weekly = MeterRow("Weekly", self)
         self.weekly.setGeometry(14, 52, 182, 34)
+        self.task_list = TaskList(self)
+        self.task_list.setGeometry(14, 96, 182, TaskList.HEADER_H + TaskList.ROW_H * TaskList.MAX_ROWS)
 
         self.status_text = ""
         self._drag_offset = None
         self._last_mtime = None
+        self.task_tracker = TaskTracker()
 
         self.load_position()
 
@@ -131,11 +191,16 @@ class Overlay(QWidget):
         self.poll_timer.timeout.connect(self.poll_status)
         self.poll_timer.start(5000)
 
+        self.task_timer = QTimer(self)
+        self.task_timer.timeout.connect(self.refresh_tasks)
+        self.task_timer.start(5000)
+
         self.tick_timer = QTimer(self)
         self.tick_timer.timeout.connect(self.tick)
         self.tick_timer.start(1000)
 
         self.poll_status(force=True)
+        self.refresh_tasks()
 
     def paintEvent(self, event):
         p = QPainter(self)
@@ -197,6 +262,9 @@ class Overlay(QWidget):
     def tick(self):
         # Re-render countdown text every second without re-reading the file.
         self.render_record()
+
+    def refresh_tasks(self):
+        self.task_list.set_tasks(self.task_tracker.scan())
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

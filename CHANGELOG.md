@@ -13,3 +13,17 @@
   file and renders a draggable, always-on-top meter with live countdowns
   and a stale-data indicator.
 - Added XDG autostart entry so the widget launches on login.
+- Fixed native messaging host writes silently failing under Chromium's snap
+  sandbox: `host.py` now resolves the real home directory via the passwd
+  database (snap rewrites `HOME` for spawned processes) and writes to a
+  plain top-level `~/token-meter/` directory instead of the hidden
+  `~/.local/share/token-meter/`, which snap's AppArmor profile blocks for
+  arbitrary new subpaths.
+- Sped up the extension's background refresh from every 10 minutes to every
+  1 minute, and made the refresh alarm re-create itself unconditionally on
+  every script load so a manual extension reload always picks up interval
+  changes.
+- Added a "Recent Tasks" section to the overlay showing the 5 most recently
+  active Claude Code CLI sessions and their cumulative token usage, read
+  directly from local session transcripts (`widget/task_tracker.py`) —
+  independent of the browser/extension pipeline.

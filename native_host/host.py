@@ -8,13 +8,27 @@ host just writes what it receives to a local status file for the desktop
 overlay widget to read, then exits.
 """
 import json
+import os
+import pwd
 import struct
 import sys
 import tempfile
 import time
 from pathlib import Path
 
-STATUS_DIR = Path.home() / ".local" / "share" / "token-meter"
+# Chromium's snap sandbox rewrites HOME for processes it spawns (including
+# this native messaging host), so Path.home() / os.environ["HOME"] can point
+# at the snap's private directory instead of the real user home. Resolve the
+# real home from the passwd database, which snap confinement doesn't touch.
+#
+# The data dir also can't live under a hidden path like ~/.local/share/ —
+# snap's apparmor profile for chromium only allows specific pre-declared
+# subpaths there (fonts, mime, applications, icons, ...), not arbitrary new
+# ones. Its blanket home-write rule instead matches top-level directory names
+# that don't start with "." or "s" (owner @{HOME}/[^s.]** rwklix), so a plain
+# non-hidden folder is required.
+REAL_HOME = Path(pwd.getpwuid(os.getuid()).pw_dir)
+STATUS_DIR = REAL_HOME / "token-meter"
 STATUS_FILE = STATUS_DIR / "status.json"
 
 

@@ -11,7 +11,7 @@ Chromium (Claude Usage Meter extension)
      browser session (same as the extension always did)
   -> pushes the result over Chrome Native Messaging to native_host/host.py
        native_host/host.py
-  -> writes ~/.local/share/token-meter/status.json
+  -> writes ~/token-meter/status.json
        widget/overlay.py (PySide6, always-on-top, frameless)
   -> reads that file every few seconds and renders it
 ```
@@ -27,7 +27,7 @@ cookie/credentials — the widget is a dumb renderer of a local file.
 3. Click **Load unpacked** and select `TokenMeter/extension/`.
 4. Make sure you're signed in to https://claude.ai in that browser.
 
-That's it — the extension will refresh every ~10 minutes and push data to
+That's it — the extension will refresh every ~1 minute and push data to
 the widget automatically. Keep Chromium running (it doesn't need to be
 focused or have a claude.ai tab open) for updates to keep flowing.
 
