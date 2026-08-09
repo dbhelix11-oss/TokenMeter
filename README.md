@@ -19,6 +19,22 @@ Chromium (Claude Usage Meter extension)
 Nothing outside the browser ever touches your claude.ai session
 cookie/credentials — the widget is a dumb renderer of a local file.
 
+## Credits
+
+The browser extension in [`extension/`](extension/) is a fork of
+[Nachtalb/claude-usage-meter](https://github.com/Nachtalb/claude-usage-meter),
+licensed under [LGPL-3.0](extension/LICENSE). All credit for the original
+popup UI, the claude.ai usage-fetching logic, and the toolbar badge goes to
+its author, Nachtalb — this project adds a Chrome Native Messaging push
+(`background.js`) so a local process can read that data outside the browser,
+and builds the native host (`native_host/`) and desktop overlay
+(`widget/`) around it. `extension/manifest.json` keeps the original
+`author`/`homepage_url` fields intact, and the upstream `LICENSE`,
+`README.md`, and `PRIVACY.md` ship unmodified alongside the fork.
+
+Everything outside `extension/` (`native_host/`, `widget/`, `scripts/`) is
+original code for this project.
+
 ## One-time setup
 
 Two ways to install the extension — pick one.

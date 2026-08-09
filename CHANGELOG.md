@@ -46,3 +46,12 @@
   `~/token-meter/api_credits_config.json`, outside the repo. Worked around a
   Cost API quirk where date ranges reaching into today are rejected (only
   fully-completed UTC days are queryable).
+
+## 2026-08-09
+
+- Made the repo public. Added a Credits section to the root `README.md`
+  crediting [Nachtalb/claude-usage-meter](https://github.com/Nachtalb/claude-usage-meter)
+  (LGPL-3.0) as the source of the forked browser extension in `extension/`,
+  which already carried its original `LICENSE`, `README.md`, `PRIVACY.md`,
+  and `author`/`homepage_url` manifest fields unmodified. Verified no API
+  keys or secrets exist anywhere in git history before flipping visibility.
