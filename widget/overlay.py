@@ -8,6 +8,7 @@ extension last pushed.
 """
 import json
 import sys
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -15,10 +16,12 @@ from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QFont
 from PySide6.QtWidgets import QApplication, QWidget, QMenu
 
+import api_credits
 from task_tracker import TaskTracker, fmt_tokens
 
 STATUS_FILE = Path.home() / "token-meter" / "status.json"
 POSITION_FILE = Path.home() / "token-meter" / "widget_position.json"
+CREDITS_FILE = api_credits.OUTPUT_FILE
 STALE_AFTER_MS = 20 * 60 * 1000  # extension refreshes every 10 min; flag one missed cycle
 
 BG_COLOR = QColor(28, 26, 24, 235)
@@ -109,6 +112,69 @@ class MeterRow(QWidget):
         p.end()
 
 
+class CreditsRow(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedHeight(34)
+        self.payload = None
+
+    def set_data(self, payload):
+        self.payload = payload
+        self.update()
+
+    def paintEvent(self, event):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+
+        p.setFont(QFont("Sans", 9))
+        p.setPen(FG_COLOR)
+        p.drawText(0, 12, "API Credits")
+
+        payload = self.payload or {}
+        if not payload.get("configured"):
+            p.setFont(QFont("Sans", 8))
+            p.setPen(DIM_COLOR)
+            p.drawText(0, 30, "not configured")
+            p.end()
+            return
+
+        total = payload.get("total")
+        spent = payload.get("spent")
+        pct = None
+        if total and spent is not None and total > 0:
+            pct = min(spent / total * 100, 100)
+
+        if spent is not None and total is not None:
+            right_text = f"${spent:,.2f} / ${total:,.2f}"
+        else:
+            right_text = payload.get("error") or "—"
+        p.setPen(DIM_COLOR)
+        p.setFont(QFont("Sans", 8))
+        fm = p.fontMetrics()
+        p.drawText(self.width() - fm.horizontalAdvance(right_text), 12, right_text)
+
+        pct_str = "—" if pct is None else f"{round(pct)}%"
+        p.setFont(QFont("Sans", 9, QFont.Bold))
+        p.setPen(FG_COLOR)
+        p.drawText(0, 30, pct_str)
+
+        bar_x = 40
+        bar_y = 22
+        bar_w = self.width() - bar_x
+        bar_h = 6
+        track = QPainterPath()
+        track.addRoundedRect(bar_x, bar_y, bar_w, bar_h, 3, 3)
+        p.fillPath(track, QColor(255, 255, 255, 30))
+
+        if pct is not None:
+            fill_w = max(4, min(bar_w, bar_w * pct / 100))
+            fill = QPainterPath()
+            fill.addRoundedRect(bar_x, bar_y, fill_w, bar_h, 3, 3)
+            p.fillPath(fill, pct_color(pct))
+
+        p.end()
+
+
 class TaskList(QWidget):
     ROW_H = 18
     HEADER_H = 16
@@ -171,14 +237,16 @@ class Overlay(QWidget):
             Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.resize(210, 226)
+        self.resize(210, 266)
 
         self.five_hour = MeterRow("5-hour", self)
         self.five_hour.setGeometry(14, 12, 182, 34)
         self.weekly = MeterRow("Weekly", self)
         self.weekly.setGeometry(14, 52, 182, 34)
+        self.credits_row = CreditsRow(self)
+        self.credits_row.setGeometry(14, 92, 182, 34)
         self.task_list = TaskList(self)
-        self.task_list.setGeometry(14, 96, 182, TaskList.HEADER_H + TaskList.ROW_H * TaskList.MAX_ROWS)
+        self.task_list.setGeometry(14, 136, 182, TaskList.HEADER_H + TaskList.ROW_H * TaskList.MAX_ROWS)
 
         self.status_text = ""
         self._drag_offset = None
@@ -195,12 +263,17 @@ class Overlay(QWidget):
         self.task_timer.timeout.connect(self.refresh_tasks)
         self.task_timer.start(5000)
 
+        self.credits_timer = QTimer(self)
+        self.credits_timer.timeout.connect(self.poll_credits)
+        self.credits_timer.start(5000)
+
         self.tick_timer = QTimer(self)
         self.tick_timer.timeout.connect(self.tick)
         self.tick_timer.start(1000)
 
         self.poll_status(force=True)
         self.refresh_tasks()
+        self.poll_credits()
 
     def paintEvent(self, event):
         p = QPainter(self)
@@ -266,6 +339,13 @@ class Overlay(QWidget):
     def refresh_tasks(self):
         self.task_list.set_tasks(self.task_tracker.scan())
 
+    def poll_credits(self):
+        try:
+            payload = json.loads(CREDITS_FILE.read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            payload = {"configured": False}
+        self.credits_row.set_data(payload)
+
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self._drag_offset = event.globalPosition().toPoint() - self.pos()
@@ -306,6 +386,8 @@ class Overlay(QWidget):
 
 
 def main():
+    threading.Thread(target=api_credits.run_forever, daemon=True).start()
+
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(True)
     overlay = Overlay()

@@ -60,6 +60,42 @@ copies under `~/.config/chromium/NativeMessagingHosts/` and
 `~/snap/chromium/common/chromium/NativeMessagingHosts/`) until those are
 updated to match.
 
+### API credit meter (optional)
+
+Separate from the two meters above — those track a claude.ai Pro/Max
+subscription's rate-limit windows via the browser extension. This one
+tracks $ spent against a pay-as-you-go **API** account (e.g. what Claude
+Code draws from if it's configured with an API key instead of a
+subscription login), via Anthropic's official [Usage & Cost Admin
+API](https://platform.claude.com/docs/en/api/usage-cost-api). That's an
+organization-management endpoint — polling it does not consume Messages-API
+tokens/credits.
+
+Anthropic doesn't currently expose an API for your *remaining* prepaid
+credit balance, only spend, so this works off a manual snapshot: you note
+your current balance and today's date, and the widget tracks spend forward
+from there and subtracts.
+
+To enable it:
+
+1. Create an Admin API key (`sk-ant-admin01-...`) — see [Create an Admin API
+   key](https://platform.claude.com/docs/en/manage-claude/admin-api-keys).
+   This is different from a normal API key and only works for Console
+   (pay-as-you-go) organizations, not individual accounts.
+2. Check your current balance at
+   https://console.anthropic.com/settings/billing.
+3. Copy `widget/api_credits_config.example.json` to
+   `~/token-meter/api_credits_config.json` and fill in:
+   - `admin_api_key` — the key from step 1.
+   - `total_purchased_usd` — the balance from step 2.
+   - `since` — today's date (`YYYY-MM-DD`), matching that balance snapshot.
+
+The widget polls every 2 minutes and shows spent/total as a bar, same style
+as the other two meters. Update `total_purchased_usd` and `since` any time
+you check your balance again (e.g. after topping up) to re-anchor it.
+`~/token-meter/api_credits_config.json` lives outside the git repo and is
+never read by anything but this widget.
+
 ## Running the widget
 
 Already started for this session. It also autostarts on login via

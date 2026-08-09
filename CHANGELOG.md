@@ -37,3 +37,12 @@
 - Documented remaining portability gaps (hardcoded native-host path, no
   cross-platform installer, manual venv/autostart setup, per-machine
   signing key) as a TODO list for a future public release.
+- Added an "API Credits" meter tracking pay-as-you-go Anthropic API spend
+  against a manually-entered credit balance snapshot (`widget/api_credits.py`).
+  Polls Anthropic's Admin Cost Report API — an organization-management
+  endpoint, so it doesn't consume Messages-API tokens/credits — on a
+  background thread every 2 minutes, independent of the browser/extension
+  pipeline. Config (Admin API key + balance snapshot) lives at
+  `~/token-meter/api_credits_config.json`, outside the repo. Worked around a
+  Cost API quirk where date ranges reaching into today are rejected (only
+  fully-completed UTC days are queryable).
