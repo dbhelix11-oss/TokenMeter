@@ -55,3 +55,13 @@
   which already carried its original `LICENSE`, `README.md`, `PRIVACY.md`,
   and `author`/`homepage_url` manifest fields unmodified. Verified no API
   keys or secrets exist anywhere in git history before flipping visibility.
+
+## 2026-08-10
+
+- Clarified the API credit meter setup instructions in `README.md`:
+  `total_purchased_usd` is the amount you last topped up (not your current
+  remaining balance) and `since` is that top-up's date — entering a current
+  balance instead causes spend since `since` to be subtracted twice. This
+  was found after a live misconfiguration where a remaining balance was
+  entered as `total_purchased_usd`, making the meter read a too-low
+  percentage.

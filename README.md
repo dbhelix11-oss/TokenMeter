@@ -98,13 +98,18 @@ To enable it:
    key](https://platform.claude.com/docs/en/manage-claude/admin-api-keys).
    This is different from a normal API key and only works for Console
    (pay-as-you-go) organizations, not individual accounts.
-2. Check your current balance at
-   https://console.anthropic.com/settings/billing.
+2. Note the dollar amount you last **topped up** (e.g. "I added $5.00 to
+   the account"), and the date you did that top-up — not your current
+   remaining balance. The widget computes remaining balance itself by
+   subtracting spend (from the Cost API) that happened on or after that
+   date, so if you enter your *current* balance here it'll get
+   double-subtracted.
 3. Copy `widget/api_credits_config.example.json` to
    `~/token-meter/api_credits_config.json` and fill in:
    - `admin_api_key` — the key from step 1.
-   - `total_purchased_usd` — the balance from step 2.
-   - `since` — today's date (`YYYY-MM-DD`), matching that balance snapshot.
+   - `total_purchased_usd` — the top-up amount from step 2 (the full
+     amount added, not what's left of it).
+   - `since` — the top-up date from step 2 (`YYYY-MM-DD`).
 
 The widget polls every 2 minutes and shows spent/total as a bar, same style
 as the other two meters. Update `total_purchased_usd` and `since` any time
