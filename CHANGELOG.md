@@ -70,3 +70,4 @@
 
 - README: documented how to run the widget in the background
   (`setsid`/`nohup` with a single `&`, or `Ctrl+Z` then `bg`/`disown`).
+- README: removed a duplicate `nohup` line from the background-run notes.

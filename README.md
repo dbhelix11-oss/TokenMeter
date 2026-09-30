@@ -138,7 +138,6 @@ setsid ./widget/run.sh >/dev/null 2>&1 &
 (`nohup ./widget/run.sh >/dev/null 2>&1 &` also works. Note `&&` only chains
 commands; a single `&` is what backgrounds one.) If it's already running in
 the foreground, press `Ctrl+Z`, then run `bg` and `disown`.
-To survive terminal closing use nohup ./widget/run.sh >/dev/null 2>&1 &
 
 ## TODO — before a public release
 
