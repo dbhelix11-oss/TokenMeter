@@ -71,3 +71,7 @@
 - README: documented how to run the widget in the background
   (`setsid`/`nohup` with a single `&`, or `Ctrl+Z` then `bg`/`disown`).
 - README: removed a duplicate `nohup` line from the background-run notes.
+- Added `setup.sh`: creates the venv + PySide6, installs the native-messaging
+  manifest (rendered with the clone's real path) for all detected
+  Chromium-family browsers incl. snap Chromium, and writes the autostart
+  entry. README TODO trimmed to the remaining items.
