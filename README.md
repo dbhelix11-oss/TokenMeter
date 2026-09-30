@@ -129,6 +129,17 @@ Already started for this session. It also autostarts on login via
 
 To start it manually: `./widget/run.sh`
 
+To start it in the background so it survives closing the terminal:
+
+```bash
+setsid ./widget/run.sh >/dev/null 2>&1 &
+```
+
+(`nohup ./widget/run.sh >/dev/null 2>&1 &` also works. Note `&&` only chains
+commands; a single `&` is what backgrounds one.) If it's already running in
+the foreground, press `Ctrl+Z`, then run `bg` and `disown`.
+To survive terminal closing use nohup ./widget/run.sh >/dev/null 2>&1 &
+
 ## TODO — before a public release
 
 Everything below currently hardcodes paths/assumptions specific to this

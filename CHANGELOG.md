@@ -65,3 +65,8 @@
   was found after a live misconfiguration where a remaining balance was
   entered as `total_purchased_usd`, making the meter read a too-low
   percentage.
+
+## 2026-09-29
+
+- README: documented how to run the widget in the background
+  (`setsid`/`nohup` with a single `&`, or `Ctrl+Z` then `bg`/`disown`).
